@@ -1,0 +1,11 @@
+--- src/Mixfix/yices2_Bindings.hh.orig
++++ src/Mixfix/yices2_Bindings.hh
+@@ -27,7 +27,7 @@
+ #define _yices2_Bindings_hh_
+ 
+ #include <map>
+-#include "yices.h"
++#include "yices/yices.h"
+ 
+ class VariableGenerator : public SMT_EngineWrapper
+ {

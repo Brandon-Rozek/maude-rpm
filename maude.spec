@@ -16,27 +16,41 @@ BuildRequires:  flex
 BuildRequires:  libbuddy
 BuildRequires:  libtecla
 
+# Fixes import to yices.h
+Patch0: maude-3.4-yices-import.patch
+
+Patch1: maude-3.4-search-datadir.patch
+
 %description
 Maude is a high-performance reflective language and system supporting both
 equational and rewriting logic specification and programming.
 
 %prep
 %setup -q -n Maude-Maude3.4
+%patch -P 0 -p0
+%patch -P 1 -p1
 
-# Fix path to yices.h
-sed -i 's/#include "yices.h"/#include "yices\/yices.h"/' src/Mixfix/yices2_Bindings.hh
-
-# Ignore fileTest
-sed -i 's/fileTest \\/#fileTest \\/' tests/Misc/Makefile.in
 
 %build
-%configure
+
+mkdir Opt
+cd Opt
+
+cat <<EOF > configure
+#!/bin/sh
+../configure "$@" --prefix=/usr
+EOF
+chmod u+x ./configure
+
+%configure --with-yices2=yes --with-cvc4=no --enable-compiler
 %make_build
 
 %install
+cd Opt
 %make_install
 
 %check
+cd Opt
 make check
 
 %files

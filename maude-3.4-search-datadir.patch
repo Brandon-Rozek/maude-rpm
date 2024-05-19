@@ -1,0 +1,40 @@
+Have maude search in datadir for its files.
+--- a/src/Main/main.cc
++++ b/src/Main/main.cc
+@@ -331,6 +331,11 @@ findPrelude(string& directory, string& f
+ {
+   if (directoryManager.searchPath(MAUDE_LIB, directory, fileName, R_OK))
+     return true;
++  if (directoryManager.checkAccess(DATADIR, fileName, R_OK))
++    {
++      directory = DATADIR;
++      return true;
++    }
+   if (!(executableDirectory.empty()) &&
+       directoryManager.checkAccess(executableDirectory, fileName, R_OK))
+     {
+--- a/src/Mixfix/global.cc
++++ b/src/Mixfix/global.cc
+@@ -116,6 +116,11 @@
+       //
+       if (directoryManager.searchPath(MAUDE_LIB, directory, fileName, R_OK, ext))
+ 	return true;
++      
++      directory = DATADIR;
++      if (directoryManager.checkAccess(DATADIR, fileName, R_OK, ext))
++	return true;
++
+       //
+       //	Last hope is the directory containing the Maude executable.
+       //
+
+--- a/src/Mixfix/global.hh
++++ b/src/Mixfix/global.hh
+@@ -37,6 +37,7 @@ extern bool alwaysAdviseFlag;
+ 
+ #define PRELUDE_NAME	"prelude.maude"
+ #define MAUDE_LIB	"MAUDE_LIB"
++#define DATADIR         "/usr/share"
+ 
+ bool
+ findPrelude(string& directory, string& fileName);
